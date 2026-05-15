@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, render_template_string
 
 app = Flask(__name__)
 
@@ -12,8 +12,10 @@ def verificarlogin():
     nome = request.form.get('nome')
     idade = request.form.get('idade')
     email = request.form.get('email')
-    return '''<h1>Olá {{nome}}</h1>
-            <hr>
-            <h3>Nome: {{nome}}</h3>
-            <h3>Idade: {{idade}}</h3>
-            <h3>Email: {{email}}</h3>'''
+    return render_template_string('''
+        <h1>Olá {{nome}}</h1>
+        <hr>
+        <h3>Nome: {{nome}}</h3>
+        <h3>Idade: {{idade}}</h3>
+        <h3>Email: {{email}}</h3>
+    ''', nome=nome, idade=idade, email=email)

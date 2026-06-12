@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>    
+    <title></title>
+    <meta charset="utf-8">
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css"/>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@100;200;300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+        }
+        body{
+            background-image: url("{{ url_for('static', filename='img/cadastro.png') }}");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+    </style>
+  </head>
+  <body class="flex items-center justify-center min-h-screen font-[Sora]">
+
+    <div class="card w-96 bg-base-100 shadow-[0_0_30px_rgba(11,60,129,0.2)]
+            hover:shadow-[0_0_60px_rgba(11,60,129,0.4)]
+            transition duration-300 grid justify-items-center gap-3 p-5">
+
+        <h2 class="text-[#0B3C81] text-xl font-bold">Cadastro</h2>
+
+            <form class="grid gap-3" action="{{ url_for('cadastrar') }}" method="post">
+                <input class="input input-bordered placeholder-[#0B3C81] bg-[#F2EDE3] focus:border-[#0B3C81] focus:outline-none hover:border-[#0B3C81]" type="text" name="email" placeholder="Email">
+
+                <input class="input input-bordered placeholder-[#0B3C81] bg-[#F2EDE3] focus:border-[#0B3C81] focus:outline-none hover:border-[#0B3C81]"  type="text" name="usuario" placeholder="Usuário">
+
+                <input class="input input-bordered placeholder-[#0B3C81] bg-[#F2EDE3] focus:border-[#0B3C81] focus:outline-none hover:border-[#0B3C81]" type="password" name="senha" placeholder="Senha">
+
+                <input class="input input-bordered placeholder-[#0B3C81] bg-[#F2EDE3] focus:border-[#0B3C81] focus:outline-none hover:border-[#0B3C81]" type="password" name="confirmarsenha" placeholder="Confirmar Senha">
+
+                <button type="submit" class="btn text-white bg-[#0B3C81] hover:bg-[#A9C0E3] hover:text-[#0B3C81] hover:border-[#0B3C81]">Cadastrar</button>
+            </form>
+
+            <a href="{{ url_for('index') }}">
+            <button class="text-[#0B3C81]" type="button">Já possui cadastro</button>
+            </a>
+
+        </div>
+
+    {% if msg %}
+        <script>
+            alert("{{ msg }}");
+        </script>
+    {% endif %}
+
+  </body>
+</html>

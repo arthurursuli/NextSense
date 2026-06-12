@@ -1,0 +1,7 @@
+[
+    {
+        "email": "arthur.ursulino@escolar.ifrn.edu.br",
+        "usuario": "admin",
+        "senha": "scrypt:32768:8:1$G1vKjKaqqfikqXIM$45f2585770766c9d392cb0fc7278c3e90b81f3070ac78ed957ae55c0355041f873528e4b771947edb5a53300a2723af210b2c684895b275fbcbe7ca168026cb7"
+    }
+]

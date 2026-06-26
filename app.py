@@ -112,6 +112,38 @@ def menu():
     )
 
 
+@app.route('/pesquisa')
+def pesquisa():
+    if 'usuario' not in session:
+        return redirect(url_for('index'))
+
+    return render_template(
+        'pesquisa.html',
+        usuario=session['usuario']
+    )
+
+
+@app.route('/entrada')
+def entrada():
+    if 'usuario' not in session:
+        return redirect(url_for('index'))
+
+    return render_template(
+        'entrada.html',
+        usuario=session['usuario']
+    )
+
+
+@app.route('/perfil')
+def perfil():
+    if 'usuario' not in session:
+        return redirect(url_for('index'))
+
+    return render_template(
+        'perfil.html',
+        usuario=session['usuario']
+    )
+
 @app.route('/logout')
 def logout():
     session.pop('usuario', None)

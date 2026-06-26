@@ -17,7 +17,39 @@
             background-position: center;
             background-repeat: no-repeat;
         }
+        .toast {
+        position: fixed;
+        left: 50%;
+        bottom: 20px;
+        transform: translateX(-50%) translateY(10px);
+        
+        background: #ff3b3b;
+        color: white;
+        padding: 12px 18px;
+        border-radius: 10px;
+        font-family: Arial;
+
+        opacity: 0;
+        transition: 0.3s;
+
+        max-width: 320px;
+        width: fit-content;
+        text-align: center;
+        }
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
     </style>
+    <script>
+        window.onload = () => {
+            const toast = document.getElementById("toast");
+            if (toast && toast.innerText.trim() !== "") {
+                toast.classList.add("show");
+                setTimeout(() => toast.classList.remove("show"), 3000);
+            }
+        };
+    </script>
   </head>
   <body class="flex items-center justify-center min-h-screen font-[Sora]">
 
@@ -43,13 +75,9 @@
             <button class="text-[#0B3C81]" type="button">Já possui cadastro</button>
             </a>
 
-        </div>
+    </div>
 
-    {% if msg %}
-        <script>
-            alert("{{ msg }}");
-        </script>
-    {% endif %}
+    <div id="toast" class="toast">{{ msg }}</div>
 
   </body>
 </html>

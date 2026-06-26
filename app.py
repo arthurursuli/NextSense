@@ -1,29 +1,19 @@
 from flask import Flask, render_template, request, redirect, url_for, session
-import json
-import os
 import re
 from werkzeug.security import generate_password_hash, check_password_hash
+import os
+from supabase import create_client
+from dotenv import load_dotenv
 
+load_dotenv()
+
+SUPABASE_URL = os.getenv("SUPABASE_URL")
+SUPABASE_KEY = os.getenv("SUPABASE_KEY")
+
+supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 app = Flask(__name__)
 app.secret_key = "segredo_super_importante"
-
-ARQUIVO = "usuarios.json"
-
-
-def carregar_usuarios():
-    if os.path.exists(ARQUIVO):
-        with open(ARQUIVO, "r", encoding="utf-8") as f:
-            try:
-                return json.load(f)
-            except:
-                return []
-    return []
-
-
-def salvar_usuarios(usuarios):
-    with open(ARQUIVO, "w", encoding="utf-8") as f:
-        json.dump(usuarios, f, indent=4, ensure_ascii=False)
 
 
 def email_valido(email):
@@ -57,20 +47,31 @@ def cadastrar():
     if senha != confirmar:
         return render_template('cadastro.html', msg="Senhas não conferem")
 
-    usuarios = carregar_usuarios()
+    email_existe = supabase.table("usuarios") \
+        .select("id") \
+        .eq("email", email) \
+        .execute()
 
-    for u in usuarios:
-        if u['email'] == email:
-            return "Usuário já existe"
+    if email_existe.data and len(email_existe.data) > 0:
+        return render_template("cadastro.html", msg="Email já cadastrado")
 
-    novo_usuario = {
-        "email": email,
-        "usuario": usuario,
-        "senha": generate_password_hash(senha)
-    }
+    usuario_existe = supabase.table("usuarios") \
+        .select("id") \
+        .eq("usuario", usuario) \
+        .execute()
 
-    usuarios.append(novo_usuario)
-    salvar_usuarios(usuarios)
+    if usuario_existe.data and len(usuario_existe.data) > 0:
+        return render_template("cadastro.html", msg="Usuário já existe")
+
+    try:
+        supabase.table("usuarios").insert({
+            "email": email,
+            "usuario": usuario,
+            "senha": generate_password_hash(senha)
+        }).execute()
+
+    except Exception:
+        return render_template("cadastro.html", msg="Erro ao cadastrar usuário")
 
     return redirect(url_for('index'))
 
@@ -83,14 +84,21 @@ def verificarlogin():
     if not usuario or not senha:
         return render_template('login.html', msg="Preencha todos os campos")
 
-    usuarios = carregar_usuarios()
+    resposta = (
+        supabase.table("usuarios")
+        .select("*")
+        .eq("usuario", usuario)
+        .execute()
+    )
 
-    for u in usuarios:
-        if u['usuario'] == usuario and check_password_hash(u['senha'], senha):
-            session['usuario'] = usuario
-            return redirect(url_for('menu'))
+    if resposta.data:
+        u = resposta.data[0]
 
-    return render_template('login.html', msg="Usuário ou senha inválidos")
+        if check_password_hash(u["senha"], senha):
+            session["usuario"] = usuario
+            return redirect(url_for("menu"))
+
+    return render_template("login.html", msg="Usuário ou senha inválidos")
 
 
 @app.route('/menu')

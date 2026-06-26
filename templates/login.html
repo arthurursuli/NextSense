@@ -42,12 +42,21 @@
       }
     </style>
     <script>
-        window.onload = () => {
-            const toast = document.getElementById("toast");
-            if (toast && toast.innerText.trim() !== "") {
-                toast.classList.add("show");
-                setTimeout(() => toast.classList.remove("show"), 3000);
-            }
+      function mostrarToast(mensagem) {
+        const toast = document.getElementById("toast");
+        toast.innerText = mensagem;
+        toast.classList.add("show");
+
+        setTimeout(() => {
+            toast.classList.remove("show");
+        }, 3000);
+      }
+      window.onload = () => {
+        const toast = document.getElementById("toast");
+        if (toast && toast.innerText.trim() !== "") {
+          toast.classList.add("show");
+          setTimeout(() => toast.classList.remove("show"), 3000);
+          }
         };
     </script>
   </head>
@@ -67,7 +76,7 @@
         <button type="submit" class="btn text-white bg-[#0B3C81] hover:bg-[#A9C0E3] hover:text-[#0B3C81] hover:border-[#0B3C81]">Entrar</button>
       </form>
 
-      <button class="text-[#0B3C81]" type="button" onclick="alert('Função ainda não disponível')">Esqueceu sua senha</button>
+      <button class="text-[#0B3C81]" type="button" onclick="mostrarToast('Função indisponível')">Esqueceu sua senha</button>
 
       <a href="{{ url_for('cadastro') }}">
         <button class="text-[#0B3C81]" type="button">Não possui cadastro</button>

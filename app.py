@@ -106,7 +106,10 @@ def menu():
     if 'usuario' not in session:
         return redirect(url_for('index'))
 
-    return render_template('menu.html', usuario=session['usuario'])
+    return render_template(
+        'menu.html',
+        usuario=session['usuario']
+    )
 
 
 @app.route('/logout')

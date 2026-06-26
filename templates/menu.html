@@ -5,8 +5,56 @@
     <meta charset="utf-8">
     <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css"/>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@100;200;300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+      html, body {
+        height: 100%;
+        margin: 0;
+      }
+      .dashboard{
+        background-image: url("{{ url_for('static', filename='img/dash.png') }}");
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        height: 16vh;
+      }
+    </style>
   </head>
-  <body>
+  <body class="font-[Sora]">
+    <div class="dashboard fixed top-0 left-0 w-full z-50 grid grid-cols-2 items-center h-20 px-5">
+      <div class="flex items-center">
+        <img class="size-[8vh]" src="{{ url_for('static', filename='img/logo.png') }}" alt="">
+      </div>
+      <div class="flex justify-end items-center gap-10 h-full">
+        <button class="group relative w-[4vh] h-[4vh] cursor-pointer">
+          <img class="absolute inset-0 w-full h-full group-hover:opacity-0 transition" src="{{ url_for('static', filename='img/search.png') }}" alt="">
+          <img class="absolute inset-0 w-full h-full opacity-0 group-hover:opacity-100 transition" src="{{ url_for('static', filename='img/searchhover.png') }}" alt="">
+        </button>
+        <button class="group relative w-[6vh] h-[4vh] cursor-pointer">
+          <img class="absolute inset-0 w-full h-full group-hover:opacity-0 transition" src="{{ url_for('static', filename='img/mail.png') }}" alt="">
+          <img class="absolute inset-0 w-full h-full opacity-0 group-hover:opacity-100 transition" src="{{ url_for('static', filename='img/mailhover.png') }}" alt="">
+        </button>
+        <button class="group relative w-[5vh] h-[5vh] cursor-pointer">
+          <img class="absolute inset-0 w-full h-full group-hover:opacity-0 transition" src="{{ url_for('static', filename='img/sun.png') }}" alt="">
+          <img class="absolute inset-0 w-full h-full opacity-0 group-hover:opacity-100 transition" src="{{ url_for('static', filename='img/sunhover.png') }}" alt="">
+        </button>
+        <button class="group relative w-[8vh] h-[8vh] cursor-pointer">
+          <img class="absolute inset-0 w-full h-full group-hover:opacity-0 transition" src="{{ url_for('static', filename='img/perfil.png') }}" alt="">
+          <img class="absolute inset-0 w-full h-full opacity-0 group-hover:opacity-100 transition" src="{{ url_for('static', filename='img/perfilhover.png') }}" alt="">
+        </button>
+      </div>
+    </div>
 
+    <main class="pt-20">
+      <div class="hero bg-[#F2EDE3] min-h-[calc(100vh-5rem)]">
+        <div class="hero-content text-center">
+          <div class="max-w-md grid gap-5">
+            <h1 class="text-5xl font-bold">Bem vindo, {{usuario}}!</h1>
+            <p>Começe a explorar nosso catálogo!</p>
+            <button class="btn text-white bg-[#0B3C81] hover:bg-[#A9C0E3] hover:text-[#0B3C81] hover:border-[#0B3C81]">Explorar</button>
+          </div>
+        </div>
+      </div>
+    </main>
   </body>
 </html>

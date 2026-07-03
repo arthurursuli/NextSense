@@ -10,13 +10,19 @@
       html, body {
         height: 100%;
         margin: 0;
+        overflow-y: scroll;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+      }
+
+      body::-webkit-scrollbar {
+          display: none;
       }
       .dashboard{
         background-image: url("{{ url_for('static', filename='img/dash.png') }}");
         background-size: cover;
         background-position: center;
         background-repeat: no-repeat;
-        height: 16vh;
       }
       .toast {
         position: fixed;
@@ -94,8 +100,8 @@
 
     <main class="pt-20">
 
-      <div id="toast" class="toast">{{ msg }}</div>
-
+      
     </main>
+    <div id="toast" class="toast">{{ msg }}</div>
   </body>
 </html>

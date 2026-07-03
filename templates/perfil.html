@@ -10,13 +10,19 @@
       html, body {
         height: 100%;
         margin: 0;
+        overflow-y: scroll;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+      }
+
+      body::-webkit-scrollbar {
+          display: none;
       }
       .dashboard{
         background-image: url("{{ url_for('static', filename='img/dash.png') }}");
         background-size: cover;
         background-position: center;
         background-repeat: no-repeat;
-        height: 16vh;
       }
       .toast {
         position: fixed;
@@ -61,7 +67,7 @@
         };
     </script>
   </head>
-  <body class="font-[Sora]">
+  <body class="font-[Sora] text-[#0B3C81]">
     <div class="dashboard fixed top-0 left-0 w-full z-50 grid grid-cols-2 items-center h-20 px-5">
       <div class="flex items-center">
         <img class="size-[8vh]" src="{{ url_for('static', filename='img/logo.png') }}" alt="">
@@ -92,10 +98,18 @@
       </div>
     </div>
 
-    <main class="pt-20">
+    <main class="pt-20 m-20">
 
-      <div id="toast" class="toast">{{ msg }}</div>
+      <h1 class="text-4xl font-bold">Olá, {{usuario}}</h1>
+      <h3 class="p-2">Usuário: {{usuario}}</h3>
+      <h3 class="p-2">Email: {{email}}</h3>
+      <h3 class="p-2">Senha: ••••••••</h3>
 
+      <a href="{{ url_for('logout') }}" class="btn text-white bg-red-500 hover:bg-red-200 hover:text-red-500 hover:border-red-500">
+        Sair
+      </a>
+      
     </main>
+    <div id="toast" class="toast">{{ msg }}</div>
   </body>
 </html>

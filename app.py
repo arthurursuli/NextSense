@@ -96,6 +96,8 @@ def verificarlogin():
 
         if check_password_hash(u["senha"], senha):
             session["usuario"] = usuario
+            session["admin"] = u["admin"]
+
             return redirect(url_for("menu"))
 
     return render_template("login.html", msg="Usuário ou senha inválidos")
@@ -117,9 +119,12 @@ def pesquisa():
     if 'usuario' not in session:
         return redirect(url_for('index'))
 
+    resposta = supabase.table("jogos").select("*").execute()
+
     return render_template(
         'pesquisa.html',
-        usuario=session['usuario']
+        usuario=session['usuario'],
+        jogos=resposta.data
     )
 
 
@@ -139,12 +144,63 @@ def perfil():
     if 'usuario' not in session:
         return redirect(url_for('index'))
 
+    resposta = (
+        supabase.table("usuarios")
+        .select("*")
+        .eq("usuario", session['usuario'])
+        .execute()
+    )
+
+    if not resposta.data:
+        return redirect(url_for('logout'))
+
+    user = resposta.data[0]
+
     return render_template(
         'perfil.html',
-        usuario=session['usuario']
+        usuario=user["usuario"],
+        email=user["email"]
     )
+
+
+@app.route('/add-jogo', methods=['POST'])
+def add_jogo():
+    if 'usuario' not in session:
+        return redirect(url_for('index'))
+
+    nome = request.form.get('nome')
+    desenvolvedora = request.form.get('desenvolvedora')
+    genero = request.form.get('genero')
+    nota = request.form.get('nota')
+    imagem_url = request.form.get('imagem_url')
+
+    supabase.table("jogos").insert({
+        "nome": nome,
+        "desenvolvedora": desenvolvedora,
+        "genero": genero,
+        "nota": float(nota),
+        "imagem_url": imagem_url
+    }).execute()
+
+    return redirect(url_for('pesquisa'))
+
+
+@app.route('/delete-jogo/<int:id>')
+def delete_jogo(id):
+    if 'usuario' not in session:
+        return redirect(url_for('index'))
+
+    if session.get("admin") != 1:
+        return "Sem permissão", 403
+
+    supabase.table("jogos").delete().eq("id", id).execute()
+
+    return redirect(url_for('pesquisa'))
+
 
 @app.route('/logout')
 def logout():
     session.pop('usuario', None)
+    session.pop('admin', None)
+
     return redirect(url_for('index'))

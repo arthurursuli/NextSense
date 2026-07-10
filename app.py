@@ -97,6 +97,7 @@ def verificarlogin():
         if check_password_hash(u["senha"], senha):
             session["usuario"] = usuario
             session["admin"] = u["admin"]
+            session["usuario_id"] = u["id"]
 
             return redirect(url_for("menu"))
 
@@ -119,12 +120,23 @@ def pesquisa():
     if 'usuario' not in session:
         return redirect(url_for('index'))
 
-    resposta = supabase.table("jogos").select("*").execute()
+    jogos = supabase.table("jogos").select("*").execute().data
+
+    avaliacoes_usuario = (
+        supabase.table("avaliacoes")
+        .select("jogo_id")
+        .eq("usuario_id", session["usuario_id"])
+        .execute()
+        .data
+    )
+
+    jogos_avaliados = [a["jogo_id"] for a in avaliacoes_usuario]
 
     return render_template(
         'pesquisa.html',
         usuario=session['usuario'],
-        jogos=resposta.data
+        jogos=jogos,
+        jogos_avaliados=jogos_avaliados
     )
 
 
@@ -133,9 +145,23 @@ def entrada():
     if 'usuario' not in session:
         return redirect(url_for('index'))
 
+    avaliacoes = (
+        supabase.table("avaliacoes")
+        .select("""
+            id,
+            usuario_id,
+            nota,
+            descricao,
+            usuarios(usuario, admin),
+            jogos(nome)
+        """)
+        .execute()
+    )
+
     return render_template(
         'entrada.html',
-        usuario=session['usuario']
+        usuario=session['usuario'],
+        avaliacoes=avaliacoes.data
     )
 
 
@@ -185,6 +211,28 @@ def add_jogo():
     return redirect(url_for('pesquisa'))
 
 
+@app.route("/avaliar_jogo", methods=["POST"])
+def avaliar_jogo():
+
+    if 'usuario' not in session:
+        return redirect(url_for('index'))
+
+    jogo_id = request.form.get("jogo_id")
+    nota = request.form.get("nota")
+    descricao = request.form.get("descricao")
+
+    usuario_id = session["usuario_id"]
+
+    supabase.table("avaliacoes").insert({
+        "usuario_id": session["usuario_id"],
+        "jogo_id": jogo_id,
+        "nota": float(nota),
+        "descricao": descricao
+    }).execute()
+
+    return redirect(url_for("entrada"))
+
+
 @app.route('/delete-jogo/<int:id>')
 def delete_jogo(id):
     if 'usuario' not in session:
@@ -196,6 +244,35 @@ def delete_jogo(id):
     supabase.table("jogos").delete().eq("id", id).execute()
 
     return redirect(url_for('pesquisa'))
+
+
+@app.route('/delete-avaliacao/<int:id>')
+def delete_avaliacao(id):
+
+    if 'usuario_id' not in session:
+        return redirect(url_for('index'))
+
+    avaliacao = (
+        supabase.table("avaliacoes")
+        .select("usuario_id")
+        .eq("id", id)
+        .execute()
+    )
+
+    if not avaliacao.data:
+        return "Avaliação não encontrada", 404
+
+    dono = avaliacao.data[0]["usuario_id"]
+
+    if dono != session["usuario_id"] and session.get("admin") != 1:
+        return "Sem permissão", 403
+
+    supabase.table("avaliacoes") \
+        .delete() \
+        .eq("id", id) \
+        .execute()
+
+    return redirect(url_for('entrada'))
 
 
 @app.route('/logout')

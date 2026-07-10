@@ -100,7 +100,43 @@
 
     <main class="text-[#0B3C81] m-20 pt-10">
 
-      <h1 class="text-2xl font-bold">Nenhuma recomendação no momento...</h1>
+      <div class="flex flex-col gap-6 w-full">
+
+        {% for avaliacao in avaliacoes %}
+
+          <div class="bg-base-100 shadow-[0_0_30px_rgba(11,60,129,0.2)]
+            hover:shadow-[0_0_60px_rgba(11,60,129,0.4)]
+            transition duration-300 gap-3 p-5 rounded-xl">
+
+            <h2 class="font-bold text-xl">
+              👤{% if avaliacao.usuarios.admin == 1 %}🛠️{% endif %} {{ avaliacao.usuarios.usuario }}
+            </h2>
+
+            <p>
+              Jogo: {{ avaliacao.jogos.nome }}
+            </p>
+
+            <p>
+              Avaliação: ⭐ <b class="text-yellow-500">{{ avaliacao.nota }}</b>
+            </p>
+
+            <p class="p-4 m-2 bg-[#A9C0E3] rounded-xl font-semibold">
+              {{ avaliacao.descricao }}
+            </p>
+
+            {% if session.get('usuario_id') == avaliacao.usuario_id or session.get('admin') == 1 %}
+              <a href="{{ url_for('delete_avaliacao', id=avaliacao.id) }}"
+              class="btn text-white bg-red-500 hover:bg-red-200 hover:text-red-500 hover:border-red-500">
+                - Remover
+              </a>
+            {% endif %}
+
+          </div>
+
+
+        {% endfor %}
+
+    </div>
 
     </main>
     <div id="toast" class="toast">{{ msg }}</div>

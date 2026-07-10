@@ -74,6 +74,26 @@
         document.getElementById("modal").classList.add("hidden");
         document.getElementById("modal").classList.remove("flex");
       }
+
+      function abrirModalAvaliacao(id, nome) {
+
+        const avaliados = {{ jogos_avaliados | tojson }};
+
+        if (avaliados.includes(id)) {
+            mostrarToast("Você já avaliou esse jogo");
+            return;
+        }
+        document.getElementById("jogo_id").value = id;
+        document.getElementById("nomeJogo").innerText = nome;
+
+        document.getElementById("modalAvaliacao").classList.remove("hidden");
+        document.getElementById("modalAvaliacao").classList.add("flex");
+      }
+
+      function fecharModalAvaliacao() {
+        document.getElementById("modalAvaliacao").classList.add("hidden");
+        document.getElementById("modalAvaliacao").classList.remove("flex");
+      }
     </script>
   </head>
   <body class="font-[Sora] text-[#0B3C81]">
@@ -136,8 +156,14 @@
             </p>
 
             <p class="mt-3 font-semibold">
-              ⭐ Nota: {{ jogo.nota }}
+              Nota: ⭐ <b class="text-yellow-500">{{ jogo.nota }}</b>
             </p>
+
+            <button
+              onclick="abrirModalAvaliacao({{ jogo.id }}, '{{ jogo.nome }}')"
+              class="btn text-white bg-[#0B3C81] hover:bg-yellow-300 hover:text-yellow-700 hover:border-yellow-500">
+              + Avaliar
+            </button>
 
             {% if session.get('admin') == 1 %}
               <a href="{{ url_for('delete_jogo', id=jogo.id) }}"
@@ -173,15 +199,52 @@
 
           <div class="flex justify-between mt-3">
 
-            <button type="button" onclick="fecharModal()" class="text-gray-600">
+            <button type="button" onclick="fecharModal()" class="btn">
               Cancelar
             </button>
 
-            <button type="submit" class="btn m-5 text-white bg-[#0B3C81] hover:bg-[#A9C0E3] hover:text-[#0B3C81] hover:border-[#0B3C81]">
+            <button type="submit" class="btn text-white bg-[#0B3C81] hover:bg-[#A9C0E3] hover:text-[#0B3C81] hover:border-[#0B3C81]">
               Adicionar
             </button>
 
           </div>
+
+        </form>
+
+      </div>
+    </div>
+    <div id="modalAvaliacao" class="fixed inset-0 hidden items-center justify-center bg-black/50">
+
+      <div class="bg-white p-6 rounded-xl w-96">
+
+        <h2 class="text-xl font-bold mb-2">
+            Avaliar jogo
+        </h2>
+
+        <p id="nomeJogo" class="mb-4 font-semibold"></p>
+
+        <form action="{{ url_for('avaliar_jogo') }}" method="POST">
+
+            <input type="hidden" name="jogo_id" id="jogo_id">
+
+            <input type="number" name="nota" min="0" max="10" step="0.1" required placeholder="Nota de 0 a 10" class="input input-bordered placeholder-[#0B3C81] bg-[#F2EDE3] focus:border-[#0B3C81] focus:outline-none hover:border-[#0B3C81]">
+
+            <textarea name="descricao" maxlength="100" placeholder="Escreva sua avaliação" class=" mt-2 textarea textarea-bordered placeholder-[#0B3C81] bg-[#F2EDE3] focus:border-[#0B3C81] focus:outline-none hover:border-[#0B3C81]"">
+            </textarea>
+
+            <div class="flex justify-between mt-5">
+
+                <button type="button" onclick="fecharModalAvaliacao()" class="btn">
+                    Cancelar
+                </button>
+
+                <button
+                    type="submit"
+                    class="btn text-white bg-[#0B3C81] hover:bg-yellow-300 hover:text-yellow-700 hover:border-yellow-500">
+                    Enviar
+                </button>
+
+            </div>
 
         </form>
 
